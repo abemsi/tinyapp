@@ -48,7 +48,7 @@ app.post('/urls', (req, res) => {
   let randomString = generateRandomString();
   urlDatabase[randomString] = longURL;
   console.log(urlDatabase); // Log the POST requst body to the console
-  res.send('Ok');
+  res.redirect(`/urls/${randomString}`);
 });
 
 app.listen(PORT, () => {
