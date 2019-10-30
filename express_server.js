@@ -73,7 +73,12 @@ app.get("/u/:shortURL", (req, res) => {
 app.get('/register', (req, res) => {
   let templateVars = { userID: req.cookies['userID'] };
   res.render('urls_reg', templateVars);
-}); 
+});
+
+app.get('/login', (req, res) => {
+  let templateVars = { userID: req.cookies['userID'] };
+  res.render('urls_login', templateVars);
+});
 
 app.post('/urls', (req, res) => {
   let longURL = req.body.longURL;
@@ -94,9 +99,16 @@ app.post('/urls/:shortURL', (req, res) => {
 })
 
 app.post('/login', (req, res) => {
-  let username = req.body.username;
-  res.cookie('userID', username);
-  res.redirect(`/urls`);
+  const { email, password } = req.body;
+  for (const userID in users) {
+    user = users[userID];
+    if (user.email === email) {
+      if (user.password === password) {
+        res.cookie('userID', userID);
+        res.redirect(`/urls`);
+      }
+    }
+  }
 })
 
 app.post('/logout', (req, res) => {
@@ -108,6 +120,9 @@ app.post('/register', (req, res) => {
   let userID = generateRandomString();
   let email = req.body.email;
   let password = req.body.password;
+  // if (email === undefined || password === undefined || email === users[userID][email]) {
+  //   res.send("400 Bad Request");
+  // }
   users[userID] = { id: userID };
   users[userID]["email"] = email;
   users[userID]["password"] = password;
