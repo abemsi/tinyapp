@@ -57,6 +57,11 @@ app.get("/u/:shortURL", (req, res) => {
   res.redirect(longURL);
 });
 
+app.get('/register', (req, res) => {
+  let templateVars = { username: req.cookies["username"] };
+  res.render('urls_reg', templateVars);
+}); 
+
 app.post('/urls', (req, res) => {
   let longURL = req.body.longURL;
   let randomString = generateRandomString();
@@ -85,6 +90,10 @@ app.post('/logout', (req, res) => {
   let username = req.body.username;
   res.clearCookie('username', username);
   res.redirect(`/urls`);
+})
+
+app.post('/register', (req, res) => {
+  res.redirect('/register');
 })
 
 app.listen(PORT, () => {
