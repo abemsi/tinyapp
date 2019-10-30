@@ -120,9 +120,15 @@ app.post('/register', (req, res) => {
   let userID = generateRandomString();
   let email = req.body.email;
   let password = req.body.password;
-  // if (email === undefined || password === undefined || email === users[userID][email]) {
-  //   res.send("400 Bad Request");
-  // }
+  if (email === "" || password === "") {
+    res.send("400 Bad Request");
+  }
+  for (const userID in users) {
+    user = users[userID];
+    if (user.email === email) {
+      res.send("400 Bad Request");
+    }
+  }
   users[userID] = { id: userID };
   users[userID]["email"] = email;
   users[userID]["password"] = password;
