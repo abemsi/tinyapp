@@ -7,6 +7,9 @@ app.set('view engine', 'ejs');
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: true}));
 
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
+
 function generateRandomString() {
   let randomString = Math.random().toString(36).substring(7);
   return randomString;
@@ -16,6 +19,12 @@ const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
 };
+
+let templateVars = {
+  username: req.cookies["username"],
+  // ... any other vars
+};
+res.render("urls_index", templateVars);
 
 app.get('/', (req, res) => {
   res.send("Hello!");
@@ -64,6 +73,12 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 app.post('/urls/:shortURL', (req, res) => {
   urlDatabase[req.params.shortURL] = req.body.updatedURL;
   res.redirect(`/urls/${req.params.shortURL}`)
+})
+
+app.post('/login', (req, res) => {
+  let username = req.body.username;
+  res.cookie('username', username);
+  res.redirect(`/urls`);
 })
 
 app.listen(PORT, () => {
