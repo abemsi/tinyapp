@@ -106,6 +106,15 @@ app.post('/logout', (req, res) => {
 })
 
 app.post('/register', (req, res) => {
+  let userID = generateRandomString();
+  let email = req.body.email;
+  let password = req.body.password;
+  users[userID] = {
+    id: userID
+  };
+  users[userID]["email"] = email;
+  users[userID]["password"] = password;
+  console.log(users);
   res.redirect('/register');
 })
 
