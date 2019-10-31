@@ -106,9 +106,10 @@ app.post('/login', (req, res) => {
       if (user.password === password) {
         res.cookie('userID', userID);
         res.redirect(`/urls`);
-      }
-    }
+      } 
+    } 
   }
+  res.send("403");
 })
 
 app.post('/logout', (req, res) => {
