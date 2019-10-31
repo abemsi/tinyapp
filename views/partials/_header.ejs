@@ -8,15 +8,14 @@
       <a class="nav-item nav-link" href="/urls">My URLs</a>
       <a class="nav-item nav-link" href="/urls/new">Create New URL</a>
     </div>
-    <% if (userID) { %>
-      <h6>Logged in as: <%= userID %></h6>
+    <% if (user) { %>
+      <h6>Logged in as: <%= user.email %></h6>
       <form class="form-inline" method="POST" action="/logout">
         <div class="form-group mb-2" style="width: 100%; margin-left: 1em">
           <button type="submit" class="btn btn-outline-dark" value="logout">Logout</button>
         </div>
       </form>
     <% } else{ %>
-      <h6><%= userID %></h6>
       <form class="form-inline" method="POST" action="/login">
         <div class="form-group mb-2" style="width: 100%; justify-content: right">
           <button type="submit" class="btn btn-outline-dark" value="login"><a href="/login">Login</a></button>
