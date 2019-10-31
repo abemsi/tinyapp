@@ -46,16 +46,18 @@ app.get('/hello', (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
+  let user = users[req.cookies['userID']];
+  console.log(user);
   let templateVars = { 
     urls: urlDatabase,
-    userID: req.cookies["userID"]
+    user: users[req.cookies['userID']]
    };
   res.render('urls_index', templateVars);
 });
 
 app.get('/urls/new', (req, res) => {
   let templateVars = {
-    userID: req.cookies["userID"]
+    user: users[req.cookies['userID']]
    };
   const userID = req.cookies.userID;
   if (!userID) {
@@ -65,29 +67,34 @@ app.get('/urls/new', (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  let templateVars = { shortURL: req.params.shortURL, longURL: urlDatabase[req.params.shortURL], userID: req.cookies["userID"] };
+  let templateVars = { 
+    shortURL: req.params.shortURL, 
+    longURL: urlDatabase[req.params.shortURL].longURL,
+    user: users[req.cookies['userID']] };
   res.render("urls_show", templateVars);
 });
 
 app.get("/u/:shortURL", (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL];
+  const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
 });
 
 app.get('/register', (req, res) => {
-  let templateVars = { userID: req.cookies['userID'] };
+  let templateVars = { 
+    user: users[req.cookies['userID']] };
   res.render('urls_reg', templateVars);
 });
 
 app.get('/login', (req, res) => {
-  let templateVars = { userID: req.cookies['userID'] };
+  let templateVars = { 
+    user: users[req.cookies['userID']] };
   res.render('urls_login', templateVars);
 });
 
 app.post('/urls', (req, res) => {
   let longURL = req.body.longURL;
   let randomString = generateRandomString();
-  urlDatabase[randomString] = longURL;
+  urlDatabase[randomString] = { longURL: longURL, userID: req.cookies['userID'] };
   console.log(urlDatabase); // Log the POST requst body to the console
   res.redirect(`/urls/${randomString}`);
 });
@@ -98,7 +105,7 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 })
 
 app.post('/urls/:shortURL', (req, res) => {
-  urlDatabase[req.params.shortURL] = req.body.updatedURL;
+  urlDatabase[req.params.shortURL] = {longURL: req.body.updatedURL, userID: req.cookies['userID']};
   res.redirect(`/urls/${req.params.shortURL}`)
 })
 
@@ -135,8 +142,8 @@ app.post('/register', (req, res) => {
     }
   }
   users[userID] = { id: userID };
-  users[userID]["email"] = email;
-  users[userID]["password"] = password;
+  users[userID]['email'] = email;
+  users[userID]['password'] = password;
   console.log(users);
   res.cookie('userID', userID);
   res.redirect('/urls');
