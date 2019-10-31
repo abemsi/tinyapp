@@ -10,6 +10,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
+const bcrypt = require('bcrypt');
+
 function generateRandomString() {
   let randomString = Math.random().toString(36).substring(7);
   return randomString;
@@ -17,7 +19,8 @@ function generateRandomString() {
 
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com"
+  "9sm5xK": "http://www.google.com",
+  "lksr5j": { longURL: 'http://www.facebook.com', userID: 'h7kv7a' }
 };
 
 const users = {
@@ -33,6 +36,13 @@ const users = {
   }
 };
 
+function urlsForUser(id) {
+  // for (let key in urlDatabase) {
+  //   if (id === urlDatabase[req.params.shortURL].userID) {
+  //     return { }
+  // }
+}
+
 app.get('/', (req, res) => {
   res.send("Hello!");
 });
@@ -47,11 +57,16 @@ app.get('/hello', (req, res) => {
 
 app.get('/urls', (req, res) => {
   let user = users[req.cookies['userID']];
+  let userURLs = urlsForUser(user);
   console.log(user);
   let templateVars = { 
-    urls: urlDatabase,
+    urls: userURLs,
     user: users[req.cookies['userID']]
    };
+   const userID = req.cookies.userID;
+  if (!userID) {
+    res.redirect('/login');
+  }
   res.render('urls_index', templateVars);
 });
 
@@ -132,6 +147,7 @@ app.post('/register', (req, res) => {
   let userID = generateRandomString();
   let email = req.body.email;
   let password = req.body.password;
+  const hashedPassword = bcrypt.hashSync(password, 10);
   if (email === "" || password === "") {
     res.send("400 Bad Request");
   }
@@ -143,7 +159,7 @@ app.post('/register', (req, res) => {
   }
   users[userID] = { id: userID };
   users[userID]['email'] = email;
-  users[userID]['password'] = password;
+  users[userID]['password'] = hashedPassword;
   console.log(users);
   res.cookie('userID', userID);
   res.redirect('/urls');
