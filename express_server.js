@@ -49,6 +49,17 @@ function urlsForUser(id) {
   return userUrls;
 }
 
+const getUserByEmail = function(email, users) {
+  // let email = req.body.email;
+  // let user = {};
+  for (const userID in users) {
+    const user = users[userID];
+    if (user.email === email) {
+      return user;
+    }
+  }
+};
+
 app.get('/', (req, res) => {
   res.send("Hello!");
 });
@@ -136,15 +147,15 @@ app.post('/urls/:shortURL', (req, res) => {
 
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
-  for (const userID in users) {
-    user = users[userID];
-    if (user.email === email) {
+  // for (const userID in users) {
+    const user = getUserByEmail(email, users);
+    if (user) {
       if (bcrypt.compareSync(password, user.password)) {
-        req.session.user_id = userID;
+        req.session.user_id = user.id;
         res.redirect(`/urls`);
       } 
     } 
-  }
+  // }
   res.send("403");
 })
 
@@ -158,15 +169,16 @@ app.post('/register', (req, res) => {
   let email = req.body.email;
   let password = req.body.password;
   let hashedPassword = bcrypt.hashSync(password, 10);
-  if (email === "" || password === "") {
-    res.send("400 Bad Request");
+  if (!email || !password) {
+    return res.send("400 Bad Request");
   }
-  for (const userID in users) {
-    user = users[userID];
-    if (user.email === email) {
-      res.send("400 Bad Request");
-    }
+  // for (const userID in users) {
+  user = getUserByEmail(email, users);
+  console.log('dtfygubhijkmjhugytf', user);
+  if (user) {
+    return res.send("400 Bad Request");
   }
+  // }
   users[userID] = { id: userID, email: email, password: hashedPassword};
   console.log(users);
   req.session.user_id = userID;
