@@ -8,21 +8,21 @@ const users = {
     password: "purple-monkey-dinosaur"
   },
   "user2RandomID": {
-    id: "user2RandomID", 
-    email: "user2@example.com", 
+    id: "user2RandomID",
+    email: "user2@example.com",
     password: "dishwasher-funk"
   }
 };
 
 describe('getUserByEmail', function() {
   it('should return a user with valid email', function() {
-    const user = getUserByEmail("user@example.com", users)
+    const user = getUserByEmail("user@example.com", users);
     const expectedOutput = "userRandomID";
     assert.equal(expectedOutput, user.id);
   });
 
-  it ('should return undfined with an invalid email', function(){
-    const user = getUserByEmail("", users)
+  it('should return undfined with an invalid email', function() {
+    const user = getUserByEmail("", users);
     const expectedOutput = undefined;
     assert.equal(expectedOutput, user);
   });

@@ -1,7 +1,7 @@
-function generateRandomString() {
+const generateRandomString = function() {
   let randomString = Math.random().toString(36).substring(7);
   return randomString;
-}
+};
 
 const getUserByEmail = function(email, users) {
   for (const userID in users) {
@@ -12,9 +12,8 @@ const getUserByEmail = function(email, users) {
   }
 };
 
-function urlsForUser(id, urlDatabase) {
+const urlsForUser = function(id, urlDatabase) {
   let userUrls = {};
-  console.log('dino', id)
   for (let key in urlDatabase) {
     let urlRecord = urlDatabase[key];
     if (id === urlRecord.userID) {
@@ -22,7 +21,7 @@ function urlsForUser(id, urlDatabase) {
     }
   }
   return userUrls;
-}
+};
 
 module.exports = {
   getUserByEmail,
