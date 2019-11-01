@@ -18,8 +18,6 @@ function generateRandomString() {
 }
 
 const urlDatabase = {
-  // "b2xVn2": "http://www.lighthouselabs.ca",
-  // "9sm5xK": "http://www.google.com",
   "lksr5j": { longURL: 'http://www.facebook.com', userID: 'h7kv7a' }
 };
 
@@ -121,7 +119,10 @@ app.post('/urls', (req, res) => {
 });
 
 app.post('/urls/:shortURL/delete', (req, res) => {
-  delete urlDatabase[req.params.shortURL];
+  let userID = req.cookies['userID'];
+  if (userID) {
+    delete urlDatabase[req.params.shortURL];
+  }
   res.redirect(`/urls`);
 })
 
@@ -132,7 +133,6 @@ app.post('/urls/:shortURL', (req, res) => {
 
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
-  // const hashedPassword = bcrypt.hashSync(password, 10);
   for (const userID in users) {
     user = users[userID];
     if (user.email === email) {
@@ -154,7 +154,7 @@ app.post('/register', (req, res) => {
   let userID = generateRandomString();
   let email = req.body.email;
   let password = req.body.password;
-  const hashedPassword = bcrypt.hashSync(password, 10);
+  // const hashedPassword = bcrypt.hashSync(password, 10);
   if (email === "" || password === "") {
     res.send("400 Bad Request");
   }
@@ -166,7 +166,7 @@ app.post('/register', (req, res) => {
   }
   users[userID] = { id: userID };
   users[userID]['email'] = email;
-  users[userID]['password'] = hashedPassword;
+  users[userID]['password'] = password;
   console.log(users);
   res.cookie('userID', userID);
   res.redirect('/urls');
