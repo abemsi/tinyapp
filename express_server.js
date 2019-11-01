@@ -18,8 +18,8 @@ function generateRandomString() {
 }
 
 const urlDatabase = {
-  "b2xVn2": "http://www.lighthouselabs.ca",
-  "9sm5xK": "http://www.google.com",
+  // "b2xVn2": "http://www.lighthouselabs.ca",
+  // "9sm5xK": "http://www.google.com",
   "lksr5j": { longURL: 'http://www.facebook.com', userID: 'h7kv7a' }
 };
 
@@ -37,10 +37,15 @@ const users = {
 };
 
 function urlsForUser(id) {
-  // for (let key in urlDatabase) {
-  //   if (id === urlDatabase[req.params.shortURL].userID) {
-  //     return { }
-  // }
+  let userUrls = {};
+  console.log('dino', id)
+  for (let key in urlDatabase) {
+    let urlRecord = urlDatabase[key];
+    if (id === urlRecord.userID) {
+      userUrls[key] = urlRecord;
+    }
+  }
+  return userUrls;
 }
 
 app.get('/', (req, res) => {
@@ -56,17 +61,18 @@ app.get('/hello', (req, res) => {
 });
 
 app.get('/urls', (req, res) => {
+  const userID = req.cookies.userID;
+  if (!userID) {
+    res.redirect('/login');
+    return;
+  }
   let user = users[req.cookies['userID']];
-  let userURLs = urlsForUser(user);
-  console.log(user);
+  let userURLs = urlsForUser(user.id);
+  console.log('poop', userURLs);
   let templateVars = { 
     urls: userURLs,
     user: users[req.cookies['userID']]
-   };
-   const userID = req.cookies.userID;
-  if (!userID) {
-    res.redirect('/login');
-  }
+  };
   res.render('urls_index', templateVars);
 });
 
@@ -126,6 +132,7 @@ app.post('/urls/:shortURL', (req, res) => {
 
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
+  // const hashedPassword = bcrypt.hashSync(password, 10);
   for (const userID in users) {
     user = users[userID];
     if (user.email === email) {
