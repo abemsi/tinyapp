@@ -136,7 +136,7 @@ app.post('/login', (req, res) => {
   for (const userID in users) {
     user = users[userID];
     if (user.email === email) {
-      if (user.password === password) {
+      if (bcrypt.compareSync(password, user.password)) {
         res.cookie('userID', userID);
         res.redirect(`/urls`);
       } 
@@ -154,7 +154,7 @@ app.post('/register', (req, res) => {
   let userID = generateRandomString();
   let email = req.body.email;
   let password = req.body.password;
-  // const hashedPassword = bcrypt.hashSync(password, 10);
+  let hashedPassword = bcrypt.hashSync(password, 10);
   if (email === "" || password === "") {
     res.send("400 Bad Request");
   }
@@ -164,9 +164,7 @@ app.post('/register', (req, res) => {
       res.send("400 Bad Request");
     }
   }
-  users[userID] = { id: userID };
-  users[userID]['email'] = email;
-  users[userID]['password'] = password;
+  users[userID] = { id: userID, email: email, password: hashedPassword};
   console.log(users);
   res.cookie('userID', userID);
   res.redirect('/urls');
