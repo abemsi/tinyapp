@@ -14,11 +14,7 @@ app.use(cookieSession({
 }))
 
 const bcrypt = require('bcrypt');
-
-function generateRandomString() {
-  let randomString = Math.random().toString(36).substring(7);
-  return randomString;
-}
+const { getUserByEmail, urlsForUser, generateRandomString } = require('./helpers');
 
 const urlDatabase = {
   "lksr5j": { longURL: 'http://www.facebook.com', userID: 'h7kv7a' }
@@ -34,29 +30,6 @@ const users = {
     id: "user2RandomID", 
     email: "user2@example.com", 
     password: "dishwasher-funk"
-  }
-};
-
-function urlsForUser(id) {
-  let userUrls = {};
-  console.log('dino', id)
-  for (let key in urlDatabase) {
-    let urlRecord = urlDatabase[key];
-    if (id === urlRecord.userID) {
-      userUrls[key] = urlRecord;
-    }
-  }
-  return userUrls;
-}
-
-const getUserByEmail = function(email, users) {
-  // let email = req.body.email;
-  // let user = {};
-  for (const userID in users) {
-    const user = users[userID];
-    if (user.email === email) {
-      return user;
-    }
   }
 };
 
@@ -79,7 +52,7 @@ app.get('/urls', (req, res) => {
     return;
   }
   let user = users[req.session.user_id];
-  let userURLs = urlsForUser(user.id);
+  let userURLs = urlsForUser(user.id, urlDatabase);
   console.log('poop', userURLs);
   let templateVars = { 
     urls: userURLs,
@@ -168,10 +141,10 @@ app.post('/register', (req, res) => {
   let userID = generateRandomString();
   let email = req.body.email;
   let password = req.body.password;
-  let hashedPassword = bcrypt.hashSync(password, 10);
   if (!email || !password) {
     return res.send("400 Bad Request");
   }
+  let hashedPassword = bcrypt.hashSync(password, 10);
   // for (const userID in users) {
   user = getUserByEmail(email, users);
   console.log('dtfygubhijkmjhugytf', user);
