@@ -43,7 +43,6 @@ app.get('/urls', (req, res) => {
   }
   let user = users[req.session.user_id];
   let userURLs = urlsForUser(user.id, urlDatabase);
-  console.log('poop', userURLs);
   let templateVars = {
     urls: userURLs,
     user: users[req.session.user_id]
