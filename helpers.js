@@ -18,7 +18,7 @@ const getUserByEmail = function(email, users) {
 const urlsForUser = function(id, urlDatabase) {
   let userUrls = {};
   for (let url in urlDatabase) {
-    let urlRecord = urlDatabase[key];
+    let urlRecord = urlDatabase[url];
     if (id === urlRecord.userID) {
       userUrls[url] = urlRecord;
     }
@@ -29,5 +29,5 @@ const urlsForUser = function(id, urlDatabase) {
 module.exports = {
   getUserByEmail,
   urlsForUser,
-  generateRandomString
+  generateRandomString,
 };
